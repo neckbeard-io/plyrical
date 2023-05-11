@@ -1,0 +1,44 @@
+[build-system]
+requires = [
+    'setuptools>=45',
+    'setuptools_scm[toml]>=6.2',
+    'tox>=3.24',
+    'twine>=3.3',
+    'wheel>=0.37',
+]
+build-backend = 'setuptools.build_meta'
+
+[tool.setuptools_scm]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+
+[tool.coverage.paths]
+source = [
+    ".tox/*/lib/python*/site-packages/plyrical"
+]
+
+[tool.pytest.ini_options]
+addopts = "-ra --showlocals --no-success-flaky-report"
+testpaths = ["tests"]
+xfail_strict = true
+markers = [
+    "git",
+    "network",
+]
+
+[tool.pylint.master]
+unsafe-load-any-extension = "no"
+extension-pkg-whitelist = "ciso8601"
+
+[tool.pylint.format]
+good-names = []
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
