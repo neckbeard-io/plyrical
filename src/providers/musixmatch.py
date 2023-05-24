@@ -25,7 +25,7 @@ class Musixmatch:
         self.ctx = ctx
         self.token_pool = []
         self.token_iter = None
-        self.active_token = None
+        self.active_token = self.get_user_token()
         self.token_sleep_seconds = token_sleep_seconds
 
     def get_user_token(self):
