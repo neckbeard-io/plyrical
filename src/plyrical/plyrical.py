@@ -4,6 +4,7 @@ import os
 import rich_click as click
 
 from mutagen import File
+from providers.kugou import Kugou
 from providers.musixmatch import Musixmatch
 from plyrical.checks import check_tags_exist, lrc_file_exists
 from plyrical.scanner import scan_dir
@@ -129,6 +130,7 @@ def cli(
     ctx.obj["logger"] = _init_logger(log_level)
 
     mxm = Musixmatch(ctx, api_url=api_url, token_sleep_seconds=token_sleep_seconds)
+    kugou = Kugou(ctx)
     # gather files
     files = scan_dir(directory=ctx.obj["directory"], extensions=ctx.obj["extensions"])
     # progress bar stuff
@@ -148,6 +150,7 @@ def cli(
     for file in files:
         # read tags
         meta = File(file)
+        length = meta.info.length * 1000  # in milliseconds
         # check if we have all the required tags (artist, album, title)
         if not check_tags_exist(ctx=ctx, file=file, meta=meta):
             ctx.obj["logger"].warning(f'file="{file}" status="couldnt find tag"')
@@ -181,6 +184,10 @@ def cli(
             track_name=meta["title"],
             album_name=meta["album"],
         )
+        if not lyrics:
+            lyrics = kugou.get_lyric_by_metadata(
+                artist=meta[ctx.obj["artist_tag"]], title=meta["title"], duration=length
+            )
 
         # nothing to write so bail on this track
         if not lyrics:
