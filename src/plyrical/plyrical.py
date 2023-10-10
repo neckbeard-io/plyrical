@@ -198,6 +198,9 @@ def cli(
             pbar.update()
             continue
 
+        # sometimes we receive a byte-like object instead of a str
+        lyrics = str(lyrics)
+
         # we are configured to write tags and they don't exist on the file
         if ctx.obj["tags"] and not tag_exists:
             ctx.obj["logger"].info(
